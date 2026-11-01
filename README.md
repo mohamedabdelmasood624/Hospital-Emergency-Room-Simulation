@@ -5,6 +5,8 @@ Faculty of Computing and Artificial Intelligence, Cairo University
 **Instructor:** Eng. Eman Salah  
 Assignment 1: Hospital Emergency Room Simulation  
 
+Please check this link: https://docs.google.com/document/d/1DzUchvvuARxGS79KYeSFT-Jl49yDh-G6aCOqD847SCU/edit?tab=t.0
+
 ## Team Members
 | Name | ID | Tasks |
 | --- | --- | --- |
