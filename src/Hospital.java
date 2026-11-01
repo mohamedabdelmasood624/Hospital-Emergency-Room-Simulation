@@ -27,6 +27,12 @@ public class Hospital {
     }
 
     public void startSimulation() {
+        for(int i = 0; i< numDoctors; ++i){
+            Doctor currentdoc = new Doctor(i+1,this.waitingRoom,this.treatmentRoomPool);
+            doctors[i] = currentdoc;
+            doctors[i].start();
+        }
+        
     }
 
     public static void main(String[] args) {
@@ -40,7 +46,7 @@ public class Hospital {
 
         System.out.print("Number of patients: ");
         int numPatients = scanner.nextInt();
-
+    
         Hospital hospital = new Hospital(waitingRoomCapacity, numDoctors, numPatients);
         hospital.startSimulation();
 

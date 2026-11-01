@@ -12,6 +12,20 @@ public class Doctor extends Thread {
 
     @Override
     public void run() {
+
+        while (!isInterrupted()) {
+            Hospital.log(getDoctorName() + " is now available");
+            try {
+                Patient current3ayan = waitingRoom.takePatient();
+                if (current3ayan != null) {
+                    Hospital.log (getDoctorName()+ " is assigned to " + current3ayan.getPatientName());
+                    Hospital.log(getDoctorName()+ " is trying to acquire a treatment room.");
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
     }
 
     public int getDoctorId() {
