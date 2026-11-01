@@ -18,6 +18,28 @@ public class WaitingRoom {
     }
 
     public void enter(Patient patient) throws InterruptedException {
+        if (!emptySlots.tryAcquire(0)) {
+            Hospital.log("The waiting room is full.\n"
+                    + patient.getPatientName() + " is waiting outside for an available seat.");
+            emptySlots.acquire();
+        }
+
+        boolean mutexAcquired = false;
+        try {
+            mutex.acquire();
+            mutexAcquired = true;
+            queue.add(patient);
+            Hospital.log(patient.getPatientName() + " entered the waiting room.");
+        } catch (InterruptedException e) {
+            emptySlots.release();
+            throw e;
+        } finally {
+            if (mutexAcquired) {
+                mutex.release();
+            }
+        }
+
+        fullSlots.release();
     }
 
     public void returnPatient(Patient patient) throws InterruptedException {
