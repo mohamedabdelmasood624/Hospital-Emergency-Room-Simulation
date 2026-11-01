@@ -43,6 +43,7 @@ public class WaitingRoom {
     }
 
     public void returnPatient(Patient patient) throws InterruptedException {
+        
     }
 
     public Patient takePatient() throws InterruptedException {
