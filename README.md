@@ -8,11 +8,11 @@ Assignment 1: Hospital Emergency Room Simulation
 ## Team Members
 | Name | ID | Tasks |
 | --- | --- | --- |
-| | | |
-| | | |
-| | | |
-| | | |
-| | | |
+| Youssef Mohamed Hassib | 20240707 | |
+| Mohamed Abdelsalam | 20242296 | |
+| Mohamed Abdelmaqsoud | 29240516 | |
+| Sayed Mamdouh | 20240256 | |
+| Ali Mohamed | 20240349 | |
 
 ## Project Overview
 This project simulates a busy Hospital Emergency Room (ER) using the Producer–Consumer Problem and Bounded Buffer synchronization pattern in Java. The simulation coordinates patients and doctors across shared resources (waiting room and treatment rooms) while preventing race conditions and deadlocks using custom semaphores.
