@@ -47,7 +47,23 @@ public class WaitingRoom {
     }
 
     public Patient takePatient() throws InterruptedException {
-        return null;
+    
+        fullSlots.acquire();
+
+        try {
+            mutex.acquire();
+        } catch (InterruptedException e) {
+            fullSlots.release();
+            throw e;
+        }
+
+        try {
+            Patient patient = queue.remove();
+            emptySlots.release();
+            return patient;
+        } finally {
+            mutex.release();
+        }
     }
 
     public int getCapacity() {

@@ -32,7 +32,12 @@ public class Hospital {
             doctors[i] = currentdoc;
             doctors[i].start();
         }
+
         
+        for (int i = 0; i < numPatients; i++) {
+            patients[i] = new Patient(i + 1, waitingRoom);
+            patients[i].start();
+        }
     }
 
     public static void main(String[] args) {
