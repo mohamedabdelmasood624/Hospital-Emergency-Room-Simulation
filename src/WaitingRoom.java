@@ -43,7 +43,15 @@ public class WaitingRoom {
     }
 
     public void returnPatient(Patient patient) throws InterruptedException {
-        
+                Thread outside = new Thread(() -> {
+            try {
+                enter(patient);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }, patient.getPatientName() + "-outside");
+        outside.setDaemon(true);
+        outside.start();
     }
 
     public Patient takePatient() throws InterruptedException {
