@@ -20,6 +20,12 @@ public class Doctor extends Thread {
                 if (current3ayan != null) {
                     Hospital.log (getDoctorName()+ " is assigned to " + current3ayan.getPatientName());
                     Hospital.log(getDoctorName()+ " is trying to acquire a treatment room.");
+                    TreatmentRoom room = treatmentRoomPool.acquireRoomWithTimeout(3000, id, current3ayan.getPatientId());
+                    if (room != null) {
+                        Hospital.log(getDoctorName() + " acquired a treatment room.");
+                    } else {
+                        Hospital.log(getDoctorName() + " could not acquire a treatment room.");
+                    }
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
