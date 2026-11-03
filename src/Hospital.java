@@ -27,6 +27,40 @@ public class Hospital {
     }
 
     public void startSimulation() {
+        for (int i = 0; i < numDoctors; i++) {
+            doctors[i] = new Doctor(i + 1, waitingRoom, treatmentRoomPool);
+            doctors[i].start();
+        }
+
+        for (int i = 0; i < numPatients; i++) {
+            patients[i] = new Patient(i + 1, waitingRoom);
+            patients[i].start();
+        }
+
+        for (Patient patient : patients) {
+            try {
+                patient.join();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+        log("=== Simulation Complete ===");
+        for (TreatmentRoom room : treatmentRoomPool.getRooms()) {
+            if (room.isOccupied()) {
+                log("Room " + room.getRoomId() + ": Occupied by Doctor " + room.getCurrentDoctorId() + ", Patient " + room.getCurrentPatientId());
+            } else {
+                log("Room " + room.getRoomId() + ": Available");
+            }
+        }
+        log("Waiting room patients: " + waitingRoom.getCurrentPatientCount());
     }
 
     public static void main(String[] args) {

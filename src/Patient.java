@@ -10,6 +10,11 @@ public class Patient extends Thread {
 
     @Override
     public void run() {
+        try {
+            waitingRoom.enter(this);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     public int getPatientId() {

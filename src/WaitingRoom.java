@@ -18,13 +18,41 @@ public class WaitingRoom {
     }
 
     public void enter(Patient patient) throws InterruptedException {
+        emptySlots.acquire();
+        mutex.acquire();
+        try {
+            queue.add(patient);
+            Hospital.log(patient.getPatientName() + " entered waiting room");
+        } finally {
+            mutex.release();
+        }
+        fullSlots.release();
     }
 
     public void returnPatient(Patient patient) throws InterruptedException {
+        emptySlots.acquire();
+        mutex.acquire();
+        try {
+            queue.add(patient);
+            Hospital.log(patient.getPatientName() + " returned to waiting room (timeout)");
+        } finally {
+            mutex.release();
+        }
+        fullSlots.release();
     }
 
     public Patient takePatient() throws InterruptedException {
-        return null;
+        fullSlots.acquire();
+        mutex.acquire();
+        try {
+            Patient patient = queue.poll();
+            if (patient != null) {
+                Hospital.log(patient.getPatientName() + " taken from waiting room");
+            }
+            return patient;
+        } finally {
+            mutex.release();
+        }
     }
 
     public int getCapacity() {
