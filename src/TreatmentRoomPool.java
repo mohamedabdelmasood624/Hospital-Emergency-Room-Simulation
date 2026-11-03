@@ -21,7 +21,13 @@ public class TreatmentRoomPool {
             return null;
         }
 
-        mutex.acquire();
+        try {
+            mutex.acquire();
+        } catch (InterruptedException e) {
+            roomSemaphore.release();
+            throw e;
+        }
+
         try {
             for (TreatmentRoom room : rooms) {
                 if (!room.isOccupied()) {
@@ -47,6 +53,6 @@ public class TreatmentRoomPool {
     }
 
     public TreatmentRoom[] getRooms() {
-        return rooms;
+        return rooms.clone();
     }
 }

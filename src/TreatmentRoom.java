@@ -16,7 +16,7 @@ public class TreatmentRoom {
         return roomId;
     }
 
-    public boolean isOccupied() {
+    public synchronized boolean isOccupied() {
         return occupied;
     }
 
@@ -32,11 +32,11 @@ public class TreatmentRoom {
         this.currentPatientId = -1;
     }
 
-    public int getCurrentDoctorId() {
+    public synchronized int getCurrentDoctorId() {
         return currentDoctorId;
     }
 
-    public int getCurrentPatientId() {
+    public synchronized int getCurrentPatientId() {
         return currentPatientId;
     }
 }
