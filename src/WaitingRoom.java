@@ -18,56 +18,37 @@ public class WaitingRoom {
     }
 
     public void enter(Patient patient) throws InterruptedException {
-        if (!emptySlots.tryAcquire(0)) {
-            Hospital.log("The waiting room is full.\n"
-                    + patient.getPatientName() + " is waiting outside for an available seat.");
-            emptySlots.acquire();
-        }
-
-        boolean mutexAcquired = false;
+        emptySlots.acquire();
+        mutex.acquire();
         try {
-            mutex.acquire();
-            mutexAcquired = true;
             queue.add(patient);
-            Hospital.log(patient.getPatientName() + " entered the waiting room.");
-        } catch (InterruptedException e) {
-            emptySlots.release();
-            throw e;
+            Hospital.log(patient.getPatientName() + " entered waiting room");
         } finally {
-            if (mutexAcquired) {
-                mutex.release();
-            }
+            mutex.release();
         }
-
         fullSlots.release();
     }
 
     public void returnPatient(Patient patient) throws InterruptedException {
-                Thread outside = new Thread(() -> {
-            try {
-                enter(patient);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }, patient.getPatientName() + "-outside");
-        outside.setDaemon(true);
-        outside.start();
+        emptySlots.acquire();
+        mutex.acquire();
+        try {
+            queue.add(patient);
+            Hospital.log(patient.getPatientName() + " returned to waiting room (timeout)");
+        } finally {
+            mutex.release();
+        }
+        fullSlots.release();
     }
 
     public Patient takePatient() throws InterruptedException {
-    
         fullSlots.acquire();
-
+        mutex.acquire();
         try {
-            mutex.acquire();
-        } catch (InterruptedException e) {
-            fullSlots.release();
-            throw e;
-        }
-
-        try {
-            Patient patient = queue.remove();
-            emptySlots.release();
+            Patient patient = queue.poll();
+            if (patient != null) {
+                Hospital.log(patient.getPatientName() + " taken from waiting room");
+            }
             return patient;
         } finally {
             mutex.release();

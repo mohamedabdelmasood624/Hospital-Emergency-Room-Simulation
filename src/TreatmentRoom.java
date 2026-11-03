@@ -20,10 +20,16 @@ public class TreatmentRoom {
         return occupied;
     }
 
-    public void occupy(int doctorId, int patientId) {
+    public synchronized void occupy(int doctorId, int patientId) {
+        this.occupied = true;
+        this.currentDoctorId = doctorId;
+        this.currentPatientId = patientId;
     }
 
-    public void vacate() {
+    public synchronized void vacate() {
+        this.occupied = false;
+        this.currentDoctorId = -1;
+        this.currentPatientId = -1;
     }
 
     public int getCurrentDoctorId() {
