@@ -18,7 +18,9 @@ public class WaitingRoom {
     }
 
     public void enter(Patient patient) throws InterruptedException {
+        // tryAcquire(0) checks for a free seat without blocking
         if (!emptySlots.tryAcquire(0)) {
+            // one log call so the two lines always stay together in the output
             Hospital.log("The waiting room is full.\n"
                     + patient.getPatientName() + " is waiting outside for an available seat.");
             emptySlots.acquire();
@@ -31,7 +33,7 @@ public class WaitingRoom {
             queue.add(patient);
             Hospital.log(patient.getPatientName() + " entered the waiting room.");
         } catch (InterruptedException e) {
-            emptySlots.release();
+            emptySlots.release();   // give the reserved seat back
             throw e;
         } finally {
             if (mutexAcquired) {
@@ -43,10 +45,29 @@ public class WaitingRoom {
     }
 
     public void returnPatient(Patient patient) throws InterruptedException {
+        emptySlots.acquire();
+        mutex.acquire();
+        try {
+            queue.add(patient);
+            Hospital.log(patient.getPatientName() + " returned to waiting room (timeout)");
+        } finally {
+            mutex.release();
+        }
+        fullSlots.release();
     }
 
     public Patient takePatient() throws InterruptedException {
-        return null;
+        fullSlots.acquire();
+        mutex.acquire();
+        try {
+            Patient patient = queue.poll();
+            if (patient != null) {
+                Hospital.log(patient.getPatientName() + " taken from waiting room");
+            }
+            return patient;
+        } finally {
+            mutex.release();
+        }
     }
 
     public int getCapacity() {
