@@ -18,14 +18,27 @@ public class WaitingRoom {
     }
 
     public void enter(Patient patient) throws InterruptedException {
-        emptySlots.acquire();
-        mutex.acquire();
-        try {
-            queue.add(patient);
-            Hospital.log(patient.getPatientName() + " entered waiting room");
-        } finally {
-            mutex.release();
+        if (!emptySlots.tryAcquire(0)) {
+            Hospital.log("The waiting room is full.\n"
+                    + patient.getPatientName() + " is waiting outside for an available seat.");
+            emptySlots.acquire();
         }
+
+        boolean mutexAcquired = false;
+        try {
+            mutex.acquire();
+            mutexAcquired = true;
+            queue.add(patient);
+            Hospital.log(patient.getPatientName() + " entered the waiting room.");
+        } catch (InterruptedException e) {
+            emptySlots.release();
+            throw e;
+        } finally {
+            if (mutexAcquired) {
+                mutex.release();
+            }
+        }
+
         fullSlots.release();
     }
 
@@ -49,6 +62,31 @@ public class WaitingRoom {
             if (patient != null) {
                 Hospital.log(patient.getPatientName() + " taken from waiting room");
             }
+                Thread outside = new Thread(() -> {
+            try {
+                enter(patient);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }, patient.getPatientName() + "-outside");
+        outside.setDaemon(true);
+        outside.start();
+    }
+
+    public Patient takePatient() throws InterruptedException {
+    
+        fullSlots.acquire();
+
+        try {
+            mutex.acquire();
+        } catch (InterruptedException e) {
+            fullSlots.release();
+            throw e;
+        }
+
+        try {
+            Patient patient = queue.remove();
+            emptySlots.release();
             return patient;
         } finally {
             mutex.release();

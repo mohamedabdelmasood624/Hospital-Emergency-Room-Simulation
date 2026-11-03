@@ -10,6 +10,8 @@ public class Patient extends Thread {
 
     @Override
     public void run() {
+        Hospital.log(getPatientName() + " arrived.");
+
         try {
             waitingRoom.enter(this);
         } catch (InterruptedException e) {
