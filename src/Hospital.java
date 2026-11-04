@@ -26,16 +26,24 @@ public class Hospital {
         System.out.println(message);
     }
 
-    public void startSimulation() {
-        for (int i = 0; i < numDoctors; i++) {
-            doctors[i] = new Doctor(i + 1, waitingRoom, treatmentRoomPool);
-            doctors[i].start();
-        }
+    public static synchronized void space(){
+        System.out.println();
+        System.out.println();
+    }
 
-        for (int i = 0; i < numPatients; i++) {
-            patients[i] = new Patient(i + 1, waitingRoom);
-            patients[i].start();
+    public void startSimulation() {
+        for (int i = 0; i < numDoctors; i++) doctors[i] = new Doctor(i + 1, waitingRoom, treatmentRoomPool);
+        for (int i = 0; i < numPatients; i++) patients[i] = new Patient(i + 1, waitingRoom);
+
+        log("Patients arriving: ");
+        for(int i = 0; i < numPatients; i++){
+            System.out.println("P" + patients[i].getPatientId()+ " ");
         }
+        space();
+
+        for(int i = 0; i < numDoctors; i++) doctors[i].start();
+        for(int i = 0; i < numPatients; i++) patients[i].start();
+
 
         for (Patient patient : patients) {
             try {
@@ -52,15 +60,24 @@ public class Hospital {
             Thread.currentThread().interrupt();
         }
 
-        log("=== Simulation Complete ===");
+        
         for (TreatmentRoom room : treatmentRoomPool.getRooms()) {
             if (room.isOccupied()) {
                 log("Room " + room.getRoomId() + ": Occupied by Doctor " + room.getCurrentDoctorId() + ", Patient " + room.getCurrentPatientId());
+                space();
             } else {
                 log("Room " + room.getRoomId() + ": Available");
+                space();
             }
         }
-        log("Waiting room patients: " + waitingRoom.getCurrentPatientCount());
+
+
+        log("All patients have been treated.");
+        log("Simulation Completed.");
+
+        for(Doctor doctor: doctors) 
+            doctor.interrupt();
+
     }
 
     public static void main(String[] args) {
@@ -74,6 +91,8 @@ public class Hospital {
 
         System.out.print("Number of patients: ");
         int numPatients = scanner.nextInt();
+
+        space();
 
         Hospital hospital = new Hospital(waitingRoomCapacity, numDoctors, numPatients);
         hospital.startSimulation();

@@ -16,9 +16,9 @@ public class Doctor extends Thread {
     public void run() {
 
         while (!isInterrupted()) {
-            Hospital.log(getDoctorName() + " is now available");
+
             try {
-                Patient current3ayan = waitingRoom.takePatient();
+                Patient current3ayan = waitingRoom.takePatient(this);
                 if (current3ayan != null) {
                     Hospital.log(getDoctorName() + " is assigned to " + current3ayan.getPatientName());
                     Hospital.log(getDoctorName() + " is trying to acquire a treatment room.");
@@ -34,6 +34,7 @@ public class Doctor extends Thread {
                         Hospital.log(getDoctorName() + " finished treating " + current3ayan.getPatientName() + ".");
                         treatmentRoomPool.releaseRoom(room);
                         Hospital.log(getDoctorName() + " released the treatment room.");
+                        Hospital.log(current3ayan.getPatientName() + " left.");
                     } else {
                         Hospital.log(getDoctorName() + " could not acquire a treatment room.");
                         Hospital.log(getDoctorName() + " returning " + current3ayan.getPatientName()
