@@ -1,21 +1,22 @@
 public class TreatmentRoomPool {
 
-    public static final int TOTAL_ROOMS = 2;
+    public static final int total_rooms = 2;
 
     private final TreatmentRoom[] rooms;
     private final Semaphore roomSemaphore;
     private final Semaphore mutex;
 
     public TreatmentRoomPool() {
-        this.rooms = new TreatmentRoom[TOTAL_ROOMS];
-        for (int i = 0; i < TOTAL_ROOMS; i++) {
+        this.rooms = new TreatmentRoom[total_rooms];
+        for (int i = 0; i < total_rooms; i++) {
             this.rooms[i] = new TreatmentRoom(i + 1);
         }
-        this.roomSemaphore = new Semaphore(TOTAL_ROOMS);
+        this.roomSemaphore = new Semaphore(total_rooms);
         this.mutex = new Semaphore(1);
     }
 
-    public TreatmentRoom acquireRoomWithTimeout(long timeoutMillis, int doctorId, int patientId) throws InterruptedException {
+    public TreatmentRoom acquireRoomWithTimeout(long timeoutMillis, int doctorId, int patientId)
+            throws InterruptedException {
         boolean acquired = roomSemaphore.tryAcquire(timeoutMillis);
         if (!acquired) {
             return null;
