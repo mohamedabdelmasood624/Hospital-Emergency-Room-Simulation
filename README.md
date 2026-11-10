@@ -48,3 +48,4 @@ This project simulates a busy Hospital Emergency Room (ER) using the Producer–
 - **Task 18**: Execute targeted concurrency tests to verify deadlocks do not occur during resource allocation and release.
 - **Task 19**: Conduct a full-team code review to ensure all members understand all parts of the code.
 - **Task 20**: Prepare the final ZIP file strictly named A1_TAname_Group_ID1_ID2_ID3_ID4 and designate exactly one member to upload it before the deadline.
+for hassib: java -cp bin HospitalGUI
